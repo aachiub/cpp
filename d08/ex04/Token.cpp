@@ -30,7 +30,9 @@ Token::Token( t_tokType const & type, int const & value ) {
 }
 
 Token::Token( Token const & src ) {
-    *this = src;
+	this->_oper  = src._oper;
+	this->_value = src._value;
+	this->_type  = src._type;
     return ;
 }
 
@@ -39,8 +41,11 @@ Token::~Token( void ) {
 }
 
 Token & Token::operator = ( Token const & rhs ) {
-    if ( this != &rhs  )
-        *this = rhs;
+ //   if ( this != &rhs  )
+ //       *this = rhs;
+	this->_oper  = rhs._oper;
+	this->_value = rhs._value;
+	this->_type  = rhs._type;
     return *this;
 }
 

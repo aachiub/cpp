@@ -21,7 +21,6 @@ int main( int ac, char **av) {
 		return ( 1 );
 	}
 	
-
 	std::string str( av[1] );	
 	Expression expr( str );
 
@@ -30,6 +29,6 @@ int main( int ac, char **av) {
 		return ( 1 );
 	}
 
-	std::cout  << "Result : " << expr.evaluate() << std::endl; 
+	expr.evaluate(); 
 	return ( 0 );
 }

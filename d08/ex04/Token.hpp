@@ -26,13 +26,13 @@
 #define ERR			'?'
 
 typedef enum e_token {
-	TOK_ADD,
+	TOK_ADD = 0,
 	TOK_SUB,
 	TOK_MUL,
 	TOK_DIV,
+	TOK_INT,
 	TOK_PAROPEN,
 	TOK_PARCLOSE,
-	TOK_INT,
 	TOK_ERR,
 }			t_tokType;
 

@@ -36,8 +36,14 @@ public:
 	int		evaluate( void );
 
 private:
+
+	bool 	_tokenize( void );
+	bool 	_makeitpostfix( void );
+	void 	_freeMem( void );
+
     std::string    		_expr;
-	std::stack<Token> 	_tokList;
+	std::vector<Token *> _postfix;
+	std::vector<Token *> _tokens;
   
 	int			_result;
 
