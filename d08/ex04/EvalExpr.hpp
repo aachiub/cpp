@@ -34,6 +34,7 @@ public:
 	bool 	analyse( void );
 	bool 	analyse( std::string const & expr );
 	int		evaluate( void );
+	int		getResult( void );
 
 private:
 

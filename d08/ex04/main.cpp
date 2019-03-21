@@ -24,11 +24,10 @@ int main( int ac, char **av) {
 	std::string str( av[1] );	
 	Expression expr( str );
 
-	if ( !expr. analyse() ) {
-		std::cout << std::endl << "Invalid expression, only parentheses, integers, and the '+' '−' '/' '∗' operators are allowed" << std::endl; 
-		return ( 1 );
-	}
-
-	expr.evaluate(); 
-	return ( 0 );
+	if ( expr. analyse() )
+		if ( expr.evaluate() ) { 
+			std::cout << "Result : " << expr.getResult() << std::endl;
+			return ( 0 );
+		}
+	return ( 1 );
 }

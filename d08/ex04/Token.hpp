@@ -17,6 +17,14 @@
 #include "ostream"
 #include <iostream>
 
+
+#define	MSG_DIVIDEBYZERO "Divide by zero error."
+#define	MSG_INVALIDUNARY "Invalid unary operation."
+//#define	MSG_INVALIDEXPRESSION "Invalid expression."
+#define	MSG_MISSINGPARENTHESIS "Missing parenthesis."
+#define	MSG_INVALIDEXPRESSION "Invalid expression, only parentheses, integers, and the '+' '−' '/' '∗' operators are allowed"
+
+
 #define ADD			'+'
 #define SUB			'-'
 #define MUL			'*'
@@ -35,7 +43,6 @@ typedef enum e_token {
 	TOK_PARCLOSE,
 	TOK_ERR,
 }			t_tokType;
-
 
 class Token {
 
