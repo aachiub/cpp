@@ -17,6 +17,18 @@
 #include <vector>
 #include "Token.hpp"
 
+#define	TXTNORMAL	"\033[0m"
+#define	TXTBLUE		"\033[1;34m"
+#define	TXTRED		"\033[1;31m"
+#define	TXTGREEN	"\033[1;32m"
+
+#define	MSG_DIVIDEBYZERO "\n\033[1;31mDivide by zero error.\033[0m\n"
+#define	MSG_INVALIDUNARY "\n\033[1;31mInvalid unary operation.\033[0m\n"
+#define	MSG_INVALIDEXPRESSION "\n\033[1;31mInvalid expression.\033[0m\n"
+//#define	MSG_INVALIDEXPRESSION "\n\033[1;31mInvalid expression, only parentheses, integers, and the '+' '−' '/' '∗' operators are allowed.\033[0m\n"
+#define	MSG_MISSINGPARENTHESIS "\n\033[1;31mMissing parenthesis.\033[0m\n"
+#define	MSG_EMPTYEXPRESSION "\n\033[1;31mVoid expression. Missing operands.\033[0m\n"
+
 
 
 class Expression {
@@ -33,7 +45,7 @@ public:
 
 	bool 	analyse( void );
 	bool 	analyse( std::string const & expr );
-	int		evaluate( void );
+	int		compute( void );
 	int		getResult( void );
 
 private:

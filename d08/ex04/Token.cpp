@@ -29,7 +29,7 @@ Token::Token( t_tokType const & type, int const & value ) {
     return ;
 }
 
-Token::Token( Token const & src ) {
+Token::Token( Token const & src )  {
 	this->_oper  = src._oper;
 	this->_value = src._value;
 	this->_type  = src._type;

@@ -25,7 +25,7 @@ int main( int ac, char **av) {
 	Expression expr( str );
 
 	if ( expr. analyse() )
-		if ( expr.evaluate() ) { 
+		if ( expr.compute() )  { 
 			std::cout << "Result : " << expr.getResult() << std::endl;
 			return ( 0 );
 		}

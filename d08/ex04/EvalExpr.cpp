@@ -14,7 +14,7 @@
 #include "EvalExpr.hpp"
 #include "Token.hpp"
 #include <sstream>
-#include <bits/stdc++.h>
+//#include <bits/stdc++.h>
 #include <list>
 #include <vector>
 
@@ -47,9 +47,8 @@ Expression & Expression::operator = ( Expression const & rhs ) {
 }
 
 void 	Expression::_freeMem( void ) {
-	for (std::vector< Token * >::iterator it = _postfix.begin(); it != _postfix.end(); it++ ) {
+	for (std::vector< Token * >::iterator it = _postfix.begin(); it != _postfix.end(); it++ )
 		free( *it );
-	}
 }
 
 bool 	Expression::_tokenize( void ) {
@@ -110,20 +109,21 @@ bool 	Expression::_tokenize( void ) {
     return true;
 }
 
+_checkprecedence( Token *it, Token *top )
+{
+	re
+}
+
 bool 	Expression::_makeitpostfix( void ) {
 	std::vector< Token * > 	operlist;
 	int			nbpar;
-	size_t 		size;
-	Token		token;
 	t_tokType 	type;
 
 	nbpar = 0;
-
 	std::cout << "Postfix: ";
 	for (std::vector< Token * >::iterator it = _tokens.begin(); it != _tokens.end(); it++ )
 	{
-		token = **it;
-		type = token.getType();
+		type = (*it)->getType();
 
 		if ( type == TOK_INT ) {
 			_postfix.push_back ( *it );
@@ -133,8 +133,9 @@ bool 	Expression::_makeitpostfix( void ) {
 		else if ( type == TOK_PAROPEN ) {
 			++nbpar;
 			free ( *it );
+			operlist.push_back( *it );
 		}
-	
+
 		else if ( type == TOK_PARCLOSE ) {
 			if ( --nbpar < 0 ) {
 				std::cout << MSG_MISSINGPARENTHESIS << std::endl;
@@ -142,39 +143,38 @@ bool 	Expression::_makeitpostfix( void ) {
 				return ( false );
 			}
 
-			if ( ( size = operlist.size() ) && nbpar > 0 ) {
-				--size;
-				_postfix.push_back( operlist[ size ] );
-				std::cout << *operlist[ size ] << " ";
-				operlist.resize ( size );
+			if ( operlist.size() && nbpar > 0 ) {
+				_postfix.push_back( operlist.back() );
+				std::cout << *operlist.back() << " ";
+				operlist.pop_back();
 			}
-			if ( nbpar == 0 && size ) {
-				--size;
-				_postfix.push_back( operlist[ size ] );
-				std::cout << *operlist[ size ] << " ";
-				operlist.resize ( size );
-			}
-
 			free ( *it );
 		}
 	
 		else { // its an Operator
-			if ( ( size = operlist.size() ) && nbpar == 0 ) {
-				--size;
-				_postfix.push_back( operlist[ size ] );
-				std::cout << *operlist[ size ] << " ";
-				operlist.resize ( size );
+/*		
+			if ( operlist.size() && nbpar == 0 ) {
+				_postfix.push_back( operlist.back() );
+				std::cout << *operlist.back() << " ";
+				operlist.pop_back();
+			}
+*/
+			// check precedence with previous operators and push appropriate ones
+			while ( operlist.size() && _checkprecedence( *it, operlist.back() )) {
+				_postfix.push_back( operlist.back() );
+				std::cout << *operlist.back() << " ";
+				operlist.pop_back();
 			}
 
 			operlist.push_back( *it );
 		}
 	}
 
-	if ( ( size = operlist.size() ) && nbpar == 0 ) {
-			--size;
-			_postfix.push_back( operlist[ size ] );
-			std::cout << *operlist[ size ] << " ";
-			operlist.resize ( size );
+	// push remaing operators
+	while ( operlist.size() ) {
+			_postfix.push_back( operlist.back() );
+			std::cout << *operlist.back() << " ";
+			operlist.pop_back();
 	}
 
 	std::cout << std::endl;
@@ -195,100 +195,96 @@ bool 	Expression::analyse( void ) {
 	return ( false );
 }
 
-int 	Expression::evaluate( void ) {
+int 	Expression::compute( void ) {
 	std::string 				post_msg[] = { "Add", "Substract", "Multiply", "Divide", "Push", "", "" };
-	std::vector < Token * > 	lst;
-	Token						token;
+	std::vector < Token * > 	stk;
+	Token						*token;
 	t_tokType					type;
-	size_t 						size;
-	int							tmpval;
+	int							tmpresult;
+
+	if ( !_postfix.size() )  {
+		std::cout << MSG_EMPTYEXPRESSION << std::endl;
+		_freeMem();
+		return ( false );
+	}
 
 	for (std::vector< Token * >::iterator it = _postfix.begin(); it != _postfix.end(); it++ )
 	{
-		token = **it;
-		type =token.getType();
+		token = *it;
+		type = token->getType();
 
-		std::cout << "[ " << **it ;
+		std::cout << "I " << **it ;
 		
 		if ( type == TOK_INT ) {
-			std::cout << " | Op ";
-			lst.push_back( *it );
+			std::cout << " | Op " << post_msg[ type ];
+			stk.push_back( *it );
 		}
-		else { // operator
-			Token *tok, *tok1, *tok2;
+		else { // it's an operator
+			std::cout << "  | Op " << post_msg[ type ];
 
-			if ( ( size = lst.size() ))  {
-				--size;
-				tok1 = lst[ size ];
-				int val1 = tok1->getType();
-				lst.resize ( size );
+			// get first operand
+			if ( stk.size() && ( token = stk.back() ) )  {
+				int operand1 = token->getValue();
+				free ( token );
+				stk.pop_back();
 
-				if ( ( size = lst.size() )) {
-					--size;
-					tok2 = lst[ size ];
-					int val2 = tok2->getType();
-					lst.resize ( size );
-			
+			// get second operand
+				if ( stk.size() && ( token = stk.back() ) )  {
+					int operand2 = token->getValue();
+					free ( token );
+					stk.pop_back();
+	
 					if ( type == TOK_ADD )
-						tmpval = val1 + val2;
+						tmpresult = operand2 + operand1;
 					else if ( type == TOK_SUB )
-						tmpval = val1 - val2;
+						tmpresult = operand2 - operand1;
 					else if ( type == TOK_MUL )
-						tmpval = val1 * val2;
+						tmpresult = operand2 * operand1;
 					else if ( type == TOK_DIV ) {
-						if ( ! val2 ) {
+						if ( ! operand1 ) {
 							std::cout << MSG_DIVIDEBYZERO << std::endl;
-							_freeMem();
+//							_freeMem();
 							return ( false );
 						}
-						tmpval = val1 / val2;
+						tmpresult = operand2 / operand1;
 					}
-					free ( tok2 );
+				
 				}
 				else { // unary
 					if ( type == TOK_DIV || type == TOK_MUL) {
 						std::cout << MSG_INVALIDUNARY << std::endl;
-						_freeMem();
+//						_freeMem();
 						return ( false );
 					}
 
-					tmpval = (  type == TOK_SUB ) ? -val1 : val1;
+					tmpresult = (  type == TOK_SUB ) ? - operand1 : operand1;
 				}
 
-				std::cout << "  | Op ";
-
-				tok = new  Token( *tok1 );
-				tok->setValue( tmpval );
-				lst.insert( lst.begin(), tok );
-				free ( tok1 );
+				// push result
+				token = new  Token( TOK_INT, tmpresult );
+				stk.push_back( token );
 			}
 			else {
 				std::cout << MSG_INVALIDEXPRESSION << std::endl;
-				_freeMem();
+//				_freeMem();
 				return ( false );
 			}
 
 			free ( *it );
 		}
-		std::cout << post_msg[ type ] << "\t| ST ";
 
 		// display stack content
-		for (int i = lst.size() - 1; i >= 0; i-- ) {
-			std::cout << lst[ i ]->getValue() << " ";
-		}
+		std::cout << "\t| ST";
+		for (int i = stk.size() - 1; i >= 0; i-- )
+			std::cout << " " << stk[ i ]->getValue();
 		std::cout << "]" << std::endl;
-
 	}
 	
-	if ( lst.size() == 1 )  {
-		--size;
-		Token *tok = lst[ size ];
-		this->_result = tok->getValue();
-		free ( tok );
+	if ( stk.size() && ( token = stk.back() ) )  {
+		this->_result = token->getValue();
+		free ( token );
 		return true;
 	}
-
-//	_freeMem();
 
 	return false;
 }
