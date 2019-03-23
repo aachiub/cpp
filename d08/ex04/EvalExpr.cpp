@@ -14,7 +14,7 @@
 #include "EvalExpr.hpp"
 #include "Token.hpp"
 #include <sstream>
-//#include <bits/stdc++.h>
+#include <bits/stdc++.h>
 #include <list>
 #include <vector>
 
@@ -109,30 +109,47 @@ bool 	Expression::_tokenize( void ) {
     return true;
 }
 
-_checkprecedence( Token *it, Token *top )
+bool	Expression::_checkprecedence( Token *oper, Token *top )
 {
-	re
+	t_tokType opertype = oper->getType();
+	t_tokType toptype = top->getType();
+
+	if ( toptype == TOK_PAROPEN )
+		return ( false );
+	
+	if ( opertype == TOK_ADD || opertype == TOK_SUB ) {
+		return ( toptype == TOK_MUL || toptype == TOK_DIV );
+	}
+
+	return false;
 }
 
 bool 	Expression::_makeitpostfix( void ) {
 	std::vector< Token * > 	operlist;
 	int			nbpar;
-	t_tokType 	type;
+	t_tokType 	type, prevtype;
 
 	nbpar = 0;
 	std::cout << "Postfix: ";
+	prevtype = TOK_ERR;
 	for (std::vector< Token * >::iterator it = _tokens.begin(); it != _tokens.end(); it++ )
 	{
 		type = (*it)->getType();
 
 		if ( type == TOK_INT ) {
-			_postfix.push_back ( *it );
-			std::cout << **it << " ";
+			if ( type == prevtype) {
+				std::cout << MSG_INVALIDEXPRESSION << std::endl;
+				_freeMem();
+				return ( false );
+			}
+			else {
+				_postfix.push_back ( *it );
+				std::cout << **it << " ";
+			}
 		}
 	
 		else if ( type == TOK_PAROPEN ) {
 			++nbpar;
-			free ( *it );
 			operlist.push_back( *it );
 		}
 
@@ -144,37 +161,55 @@ bool 	Expression::_makeitpostfix( void ) {
 			}
 
 			if ( operlist.size() && nbpar > 0 ) {
-				_postfix.push_back( operlist.back() );
-				std::cout << *operlist.back() << " ";
+				Token *tok = operlist.back();
+				_postfix.push_back( tok );
+				std::cout << *tok << " ";
 				operlist.pop_back();
 			}
 			free ( *it );
+
+			// remove corresponding open par.
+			for (std::vector< Token * >::iterator it1 = operlist.end(); ; it1-- ) {
+				if ( (*it1)->getType() == TOK_PAROPEN ) {
+					operlist.erase ( it1 );					
+					free( *it1 );
+				}
+				if ( it1 == operlist.begin() )
+					break;
+			}
 		}
 	
 		else { // its an Operator
-/*		
-			if ( operlist.size() && nbpar == 0 ) {
-				_postfix.push_back( operlist.back() );
-				std::cout << *operlist.back() << " ";
-				operlist.pop_back();
-			}
-*/
-			// check precedence with previous operators and push appropriate ones
-			while ( operlist.size() && _checkprecedence( *it, operlist.back() )) {
-				_postfix.push_back( operlist.back() );
-				std::cout << *operlist.back() << " ";
-				operlist.pop_back();
+
+			if ( type == prevtype) {
+				std::cout << MSG_INVALIDEXPRESSION << std::endl;
+				_freeMem();
+				return ( false );
 			}
 
+			// check precedence rules with previous operators and push appropriate ones
+			while ( operlist.size() && _checkprecedence( *it, operlist.back() )) {
+				Token *tok = operlist.back();
+				operlist.pop_back();
+				_postfix.push_back( tok );
+				std::cout << *tok << " ";
+			}
 			operlist.push_back( *it );
 		}
+
+		prevtype = type;
 	}
 
 	// push remaing operators
 	while ( operlist.size() ) {
-			_postfix.push_back( operlist.back() );
-			std::cout << *operlist.back() << " ";
-			operlist.pop_back();
+		Token *tok = operlist.back();
+		operlist.pop_back();
+		if ( tok->getType() != TOK_PAROPEN ) {
+			_postfix.push_back( tok );
+			std::cout << *tok << " ";
+		}
+		else
+			free ( tok );
 	}
 
 	std::cout << std::endl;

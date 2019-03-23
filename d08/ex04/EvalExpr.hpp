@@ -53,6 +53,7 @@ private:
 	bool 	_tokenize( void );
 	bool 	_makeitpostfix( void );
 	void 	_freeMem( void );
+	bool 	_checkprecedence( Token *oper, Token *top );
 
     std::string    		_expr;
 	std::vector<Token *> _postfix;
