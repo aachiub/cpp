@@ -1,6 +1,6 @@
-NAME = evalExpr
+NAME = Zombie
 
-SRC = EvalExpr.cpp Token.cpp main.cpp
+SRC = Zombie.cpp ZombieEvent.cpp main.cpp
 
 OBJ = $(SRC:.cpp=.o)
 
