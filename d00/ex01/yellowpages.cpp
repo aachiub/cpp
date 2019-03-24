@@ -6,7 +6,7 @@
 /*   By: aachir <aachir@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/07 10:38:31 by aachir            #+#    #+#             */
-/*   Updated: 2019/01/08 09:13:36 by aachir           ###   ########.fr       */
+/*   Updated: 2019/03/24 14:01:41 by aachir           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,76 +16,74 @@
 #include "yellowpages.hpp"
 #include "Phonebook.class.hpp"
 
-int		add(Phonebook *pbook)
+bool isnumber(const std::string &s) {
+  return ( !s.empty() && std::all_of( s.begin(), s.end(), ::isdigit ) );
+}
+
+bool isprintable(const std::string &s) {
+  	for (int i = 0; i < s.size(); i++)
+		if( s[i] < 32 || s[i] > 127 )
+			return ( false );
+	return ( true );
+}
+
+bool	getContactInfo( std::string const & msg, std::string &info)
+{
+	std::string	s;
+
+	std::cout << msg << std::endl;
+	while ( 1 ) {
+		std::cin >> s;
+		if ( s == EXIT || std::cin.eof() )
+			return ( false );
+		if ( isprintable( s ) ) {
+			info = s;
+			return ( true );
+		}
+		std::cout << MSGINVALIDENTRY << msg << std::endl;
+	}
+}
+
+bool	add(Phonebook *pbook)
 {
 	t_contact	contact;
 	std::string	s;
 	
 	if (pbook->getphonebookcontactnb() == MAXCONTACTS) {
 		std::cout << MSGMAXCONTACTS << std::endl;
-		return (0);
+		return ( false );
 	}
-	std::cout << MSGFIRSTNAME << std::endl;
-	std::cin >> s;
-	if (s == EXIT)
-		return (0);
-	contact.first_name = s;
-	std::cout << MSGLASTNAME << std::endl;
-	std::cin >> s;
-	if (s == EXIT)
-		return (0);
-	contact.last_name = s;
-	std::cout << MSGNICKNAME << std::endl;
-	std::cin >> s;
-	if (s == EXIT)
-		return (0);
-	contact.nick_name = s;
-	std::cout << MSGLOGIN << std::endl;
-	std::cin >> s;
-	if (s == EXIT)
-		return (0);
-	contact.login = s;
-	std::cout << MSGPOSTALADDRESS << std::endl;
-	std::cin >> s;
-	if (s == EXIT)
-		return (0);
-	contact.postal_address = s;
-	std::cout << MSGEMAILADDRESS << std::endl;
-	std::cin >> s;
-	if (s == EXIT)
-		return (0);
-	contact.email_address = s;
-	std::cout << MSGPHONENUMBER << std::endl;
-	std::cin >> s;
-	if (s == EXIT)
-		return (0);
-	contact.phone_number = s;
-	std::cout << MSGBIRTHDAYDATE << std::endl;
-	std::cin >> s;
-	if (s == EXIT)
-		return (0);
-	contact.birthday_date = s;
-	std::cout << MSGFAVORITEMEAL << std::endl;
-	std::cin >> s;
-	if (s == EXIT)
-		return (0);
-	contact.favorite_meal = s;
-	std::cout << MSGUNDERWEARCOLOR << std::endl;
-	std::cin >> s;
-	if (s == EXIT)
-		return (0);
-	contact.underwear_color = s;
-	std::cout << MSGDARKESTSECRET << std::endl;
-	std::cin >> s;
-	if (s == EXIT)
-		return (0);
-	contact.darkest_secret = s;
+
+	if ( ! getContactInfo( MSGFIRSTNAME, contact.first_name))
+		return ( false );
+	if ( ! getContactInfo( MSGLASTNAME, contact.last_name))
+		return ( false );
+	if ( ! getContactInfo( MSGNICKNAME, contact.nick_name))
+		return ( false );
+	if ( ! getContactInfo( MSGLOGIN, contact.login))
+		return ( false );
+	if ( ! getContactInfo( MSGPOSTALADDRESS, contact.postal_address))
+		return ( false );
+	if ( ! getContactInfo( MSGEMAILADDRESS, contact.email_address))
+		return ( false );
+	if ( ! getContactInfo( MSGPHONENUMBER, contact.phone_number))
+		return ( false );
+	if ( ! getContactInfo( MSGBIRTHDAYDATE, contact.birthday_date))
+		return ( false );
+	if ( ! getContactInfo( MSGFAVORITEMEAL, contact.favorite_meal))
+		return ( false );
+	if ( ! getContactInfo( MSGUNDERWEARCOLOR, contact.underwear_color))
+		return ( false );
+	if ( ! getContactInfo( MSGDARKESTSECRET, contact.darkest_secret))
+		return ( false );
+
 	pbook->addphonebookcontact(&contact);
+
 	std::cout << MSGADDED << std::endl << std::endl;
 	return (1);
 }
 
-int	search(Phonebook *pbook)
+bool	search(Phonebook *pbook)
 {
 	int 		index;
 	int 		nbcontacts;
@@ -95,12 +93,13 @@ int	search(Phonebook *pbook)
 
 	if ((nbcontacts = pbook->getphonebookcontactnb()) == 0) {
 		std::cout << MSGNOCONTACTS << std::endl  << std::endl;
-		return (1);
+		return ( false);
 	}
 	std::cout << SEARCHTITLE1 << std::endl;
 	std::cout << SEARCHTITLE2 << std::endl;
 	for (index = 0; index < nbcontacts; ++index) {
 		pbook->getphonebookcontact(index, &contact);
+
 		std::cout << std::right << std::setw(10) << index + 1;
 		std::cout << COLSEPARATOR;
 		s = contact.first_name;
@@ -109,6 +108,7 @@ int	search(Phonebook *pbook)
 			s.resize(10);
 			s[9] = '.';
 		}
+
 		std::cout << std::right << std::setw(10) << s;
 		std::cout << COLSEPARATOR;
 		s = contact.last_name;
@@ -117,6 +117,7 @@ int	search(Phonebook *pbook)
 			s.resize(10);
 			s[9] = '.';
 		}
+
 		std::cout << std::right << std::setw(10) << s;
 		std::cout << COLSEPARATOR;
 		s = contact.nick_name;
@@ -125,34 +126,48 @@ int	search(Phonebook *pbook)
 			s.resize(10);
 			s[9] = '.';
 		}
+
 		std::cout << std::right << std::setw(10) << s << std::endl;
 	}
+
 	done = 0;
+	std::cout << MSGCONTACTINDEX << std::endl;
 	while (!done) {
-		std::cout << MSGENTRYDETAILS << std::endl;
 		std::cin >> s;
-		if (s == EXIT)
-			return (0);
+		if (std::cin.eof() || s == EXIT)
+			return ( false );
+
+		if ( ! isnumber( s )) {
+			std::cout << MSGVALIDCONTACTINDEX << std::endl;
+			continue ;
+		}
+		
 		index = std::stoi(s) - 1;
+
 		if (pbook->isvalidphonebookcontact(index))
 			done = 1;
+		else
+			std::cout << MSGVALIDCONTACTINDEX << std::endl;
 	}
+
 	pbook->getphonebookcontact(index, &contact);
-	std::cout << contact.first_name << std::endl;
-	std::cout << contact.last_name << std::endl;
-	std::cout << contact.nick_name << std::endl;
-	std::cout << contact.login << std::endl;
-	std::cout << contact.postal_address << std::endl;
-	std::cout << contact.email_address << std::endl;
-	std::cout << contact.phone_number << std::endl;
-	std::cout << contact.birthday_date << std::endl;
-	std::cout << contact.favorite_meal << std::endl;
-	std::cout << contact.underwear_color << std::endl;
-	std::cout << contact.darkest_secret << std::endl;
-	return (1);
+
+	std::cout << MSGFIRSTNAME << contact.first_name << std::endl;
+	std::cout << MSGLASTNAME << contact.last_name << std::endl;
+	std::cout << MSGNICKNAME << contact.nick_name << std::endl;
+	std::cout << MSGLOGIN << contact.login << std::endl;
+	std::cout << MSGPOSTALADDRESS << contact.postal_address << std::endl;
+	std::cout << MSGEMAILADDRESS << contact.email_address << std::endl;
+	std::cout << MSGBIRTHDAYDATE << contact.phone_number << std::endl;
+	std::cout << MSGPHONENUMBER << contact.birthday_date << std::endl;
+	std::cout << MSGFAVORITEMEAL << contact.favorite_meal << std::endl;
+	std::cout << MSGUNDERWEARCOLOR << contact.underwear_color << std::endl;
+	std::cout << MSGDARKESTSECRET << contact.darkest_secret << std::endl;
+
+	return ( true );
 }
 
-int	main(void)
+int		main(void)
 {
 	Phonebook	*pbook;
 	int			done;
@@ -165,7 +180,7 @@ int	main(void)
 	while (!done) {
 		std::cout << MSGENTERCOMMAMD << std::endl;
 		std::cin >> s;
-		if (s == EXIT)
+		if (std::cin.eof() || s == EXIT)
 			done = 1;
 		else if (s == ADD)
 			add(pbook);
@@ -175,5 +190,5 @@ int	main(void)
 			std::cout << MSGVALIDCOMMAND << std::endl;
 	}
 	delete(pbook);
-	return (0);
+	return ( 0 );
 }

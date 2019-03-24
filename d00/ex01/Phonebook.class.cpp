@@ -59,7 +59,7 @@ int	Phonebook::getphonebookcontact(int index, t_contact *pcontact)
 
 int Phonebook::isvalidphonebookcontact(int index)
 {
-	return (index >= 0 && index < MAXCONTACTS);
+	return (index >= 0 && index < this->getphonebookcontactnb());
 }
 
 // private functions 

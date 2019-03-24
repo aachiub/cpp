@@ -4,15 +4,15 @@ SRC = yellowpages.cpp Contact.class.cpp Phonebook.class.cpp
 
 OBJ = $(SRC:.cpp=.o)
 
-CFLAGS = -Wall -Wextra -Werror
+CPPFLAGS = -c -Wall -Wextra -Werror
 
 all : $(NAME) 
 
-$(NAME) : $(LIB) $(OBJ)
+$(NAME) : $(OBJ)
 	clang++ -o $(NAME) $(OBJ)
 
-%.o : %.c
-	clang++ $(CFLAGS) -o $@ $<
+%.o : %.cpp
+	clang++ $(CPPFLAGS) -o $@ $<
 
 clean :
 	rm -f $(OBJ)

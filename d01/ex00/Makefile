@@ -4,7 +4,7 @@ SRC = Pony.cpp main.cpp
 
 OBJ = $(SRC:.cpp=.o)
 
-CPPFLAGS = -Wall -Wextra -Werror
+CPPFLAGS = -c -Wall -Wextra -Werror
 
 all : $(NAME) 
 

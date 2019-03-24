@@ -1,4 +1,3 @@
-
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
@@ -47,24 +46,6 @@ Expression & Expression::operator = ( Expression const & rhs ) {
 	return (*this);
 }
 
-bool 	Expression::_expressionMember( t_tokType type ) {
-	return ( type == TOK_INT || type ==	TOK_ADD || type == TOK_SUB || type == TOK_MUL || \
-								type == TOK_DIV || type == TOK_INT );
-
-}
-
-void 	Expression::_freeTokens( std::vector<Token *> & vect ) {
-	std::vector< Token * >::iterator it;
-return ;
-	for ( it = vect.begin(); it != vect.end(); it++ )
-		free( *it );
-}
-
-void 	Expression::_freeMem( void ) {
-//	_freeTokens( _tokens );
-//	_freeTokens( _postfix );
-}
-
 bool 	Expression::_tokenize( void ) {
 	std::istringstream iss( this->_expr );
 	std::vector<std::string> tokens((std::istream_iterator<std::string>(iss)), std::istream_iterator<std::string>());
@@ -78,11 +59,13 @@ bool 	Expression::_tokenize( void ) {
 	    str = *it;
 
 		if ( str.size() == 1 ) {
+
 			if ( str[0] == ADD || str[0] == SUB || str[0] == MUL || str[0] == DIV || str[0] == PAROPEN || str[0] == PARCLOSE ) {
 				token.setOperator( str[0] );			
 				std::cout << token << " ";
 				this->_tokens.push_back( new Token( token ) );	
 			}
+
 			else if ( isdigit( str[ 0 ] ) ) {
 				int value;
 				std::stringstream ss( str ); 
@@ -125,12 +108,13 @@ bool 	Expression::_tokenize( void ) {
 
 bool	Expression::_checkPreceedence( Token *oper, Token *top )
 {
-	t_tokType opertype = oper->getType();
 	t_tokType toptype = top->getType();
 
 	if ( toptype == TOK_PAROPEN )
 		return ( false );
 	
+	t_tokType opertype = oper->getType();
+
 	if ( opertype == TOK_ADD || opertype == TOK_SUB ) {
 		return ( toptype == TOK_MUL || toptype == TOK_DIV );
 	}
@@ -153,6 +137,7 @@ bool 	Expression::_makeitPostfix( void ) {
 		if ( type == TOK_INT ) {
 			if ( type == prevtype) {
 				std::cout << MSG_INVALIDEXPRESSION << std::endl;
+				// free operlist
 				_freeTokens( operlist );
 				return ( false );
 			}
@@ -168,81 +153,100 @@ bool 	Expression::_makeitPostfix( void ) {
 		}
 
 		else if ( type == TOK_PARCLOSE ) {
-			if ( --nbpar < 0 ) {
+			if ( nbpar == 0 ) {
 				std::cout << MSG_MISSINGPARENTHESIS << std::endl;
+				// free operlist
 				_freeTokens( operlist );
 				return ( false );
 			}
 
-			// push last operator
 			if ( operlist.size() ) {
 				Token *tok = operlist.back();
-//				if ( tok->getType() != TOK_PAROPEN ) {
-				if ( _expressionMember( tok->getType() ) ) {
+				if ( tok->getType() != TOK_PAROPEN ) {
 					_postfix.push_back( tok );
 					std::cout << *tok << " ";
 					operlist.pop_back();
 				}
 			}
 
+			--nbpar;
+			_tokens.erase( it );
+			free ( *it );
+
 			// remove corresponding open par.
-			for (std::vector< Token * >::iterator it1 = operlist.end() - 1; ; it1-- ) {
+			for (std::vector< Token * >::iterator it1 = operlist.end(); ; it1-- ) {
 				if ( (*it1)->getType() == TOK_PAROPEN ) {
-//					operlist.erase ( it1 , it1);					
-//					free( *it1 );
-					(*it1)->setType( TOK_ERR );
+					operlist.erase ( it1 );					
+					free( *it1 );
 				}
 				if ( it1 == operlist.begin() )
 					break;
 			}
-
-			free ( *it );
 		}
 	
 		else { // its an Operator
 
 			if ( type == prevtype) {
 				std::cout << MSG_INVALIDEXPRESSION << std::endl;
+				// free operlist
 				_freeTokens( operlist );
 				return ( false );
 			}
 
 			// check precedence rules with previous operators and push appropriate ones
-			while ( operlist.size() && _checkPreceedence( *it, operlist.back() )) {
-				Token *tok = operlist.back();
-//				if ( tok->getType() != TOK_PAROPEN ) {
-				if ( _expressionMember( tok->getType() ) ) {
-					operlist.pop_back();
-					_postfix.push_back( tok );
-					std::cout << *tok << " ";
-				}
+			Token *top;
+			while ( operlist.size() && _checkPreceedence( *it, ( top = operlist.back()) )) {
+				operlist.pop_back();
+				_postfix.push_back( top );
+				std::cout << *top << " ";
 			}
+
+			// finally push current operator 
 			operlist.push_back( *it );
 		}
 
 		prevtype = type;
 	}
 
-	if ( nbpar ) {
-		std::cout << MSG_MISSINGPARENTHESIS << std::endl;
-		_freeTokens( operlist );
-		return ( false );
-	}
-
 	// push remaing operators
 	while ( operlist.size() ) {
 		Token *tok = operlist.back();
 		operlist.pop_back();
-//		if ( tok->getType() != TOK_PAROPEN ) {
-		if ( _expressionMember( tok->getType() ) ) {
+		if ( tok->getType() != TOK_PAROPEN ) {
+			std::cout << MSG_MISSINGPARENTHESIS << std::endl;
+			// free operlist
+			free ( tok );
+			_freeTokens( operlist );
+			return ( false );
+		}
+		else {
 			_postfix.push_back( tok );
 			std::cout << *tok << " ";
 		}
 	}
-	std::cout << std::endl;
-	_freeTokens( operlist );
 
+	std::cout << std::endl;
+/*
+	if ( nbpar ) {
+		std::cout << MSG_MISSINGPARENTHESIS << std::endl;
+		// free operlist
+		_freeTokens( operlist );
+		return ( false );
+	}
+*/
 	return ( true ) ;
+}
+
+void 	Expression::_freeTokens( std::vector<Token *> & vect ) {
+	std::vector< Token * >::iterator it;
+
+	for ( it = vect.begin(); it != vect.end(); it++ )
+		free( *it );
+}
+
+void 	Expression::_freeMem( void ) {
+	_freeTokens( _tokens );
+	_freeTokens( _postfix );
 }
 
 bool 	Expression::analyse( void ) {
@@ -256,7 +260,6 @@ bool 	Expression::analyse( void ) {
 	return ( false );
 }
 
-
 int 	Expression::compute( void ) {
 	std::string 				post_msg[] = { "Add", "Substract", "Multiply", "Divide", "Push", "", "" };
 	std::vector < Token * > 	stk;
@@ -266,7 +269,6 @@ int 	Expression::compute( void ) {
 
 	if ( !_postfix.size() )  {
 		std::cout << MSG_EMPTYEXPRESSION << std::endl;
-		_freeTokens( stk );
 		_freeMem();
 		return ( false );
 	}
@@ -284,6 +286,8 @@ int 	Expression::compute( void ) {
 		}
 		else { // it's an operator
 			std::cout << "  | Op " << post_msg[ type ];
+			free ( *it );
+			_postfix.pop_back();
 
 			// get first operand
 			if ( stk.size() && ( token = stk.back() ) )  {
@@ -304,7 +308,7 @@ int 	Expression::compute( void ) {
 					else if ( type == TOK_MUL )
 						tmpresult = operand2 * operand1;
 					else if ( type == TOK_DIV ) {
-						if ( operand1 == 0 ) {
+						if ( ! operand1 ) {
 							std::cout << MSG_DIVIDEBYZERO << std::endl;
 							_freeTokens( stk );
 							_freeMem();
@@ -330,13 +334,12 @@ int 	Expression::compute( void ) {
 				stk.push_back( token );
 			}
 			else {
-				std::cout << MSG_EXPECTINGEXPRESSION << std::endl;
+				std::cout << MSG_INVALIDEXPRESSION << std::endl;
 				_freeTokens( stk );
 				_freeMem();
 				return ( false );
 			}
 
-			free ( *it );
 		}
 
 		// display stack content
@@ -352,7 +355,5 @@ int 	Expression::compute( void ) {
 		return true;
 	}
 
-	_freeTokens( stk );
-	_freeMem();
 	return false;
 }

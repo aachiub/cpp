@@ -6,7 +6,7 @@
 /*   By: aachir <aachir@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/08 15:15:52 by aachir            #+#    #+#             */
-/*   Updated: 2019/01/08 17:24:44 by aachir           ###   ########.fr       */
+/*   Updated: 2019/03/24 14:43:37 by aachir           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void ponyOnTheHeap(void)
 	hPony = new Pony(&name, &color, MALE);
 
 	hPony->getname(&name);
-	std::cout 	<< "Created on heap Pony : " << name << std::endl;
+	std::cout << "Pony \""	<< name << "\" has been created on the heap."  << std::endl;
 
 	delete hPony;
 }
@@ -38,12 +38,14 @@ void	ponyOnTheStack(void)
 
 	name 	= "Sultan";
 	sPony.setname(&name);
+
 	color	= "Black";
 	sPony.setcolor(&color);
+
 	sPony.setgender(MALE);
 
 	sPony.getname(&name);
-	std::cout 	<< "Created on stack Pony : " << name << std::endl;
+	std::cout << "Pony \""	<< name << "\" has been created on the stack."  << std::endl;
 }
 
 int		main( void )
