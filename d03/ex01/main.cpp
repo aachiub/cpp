@@ -6,7 +6,7 @@
 /*   By: aachir <aachir@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/11 08:25:07 by aachir            #+#    #+#             */
-/*   Updated: 2019/03/28 16:12:39 by aachir           ###   ########.fr       */
+/*   Updated: 2019/03/28 13:34:58 by aachir           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@ int main( void ) {
 	FragTrap		ft( "Rebel" );
 	std::string target = "Solo";
 //	launchAttack( ft, target );
-
 	ft.vaulthunter_dot_exe( target );
 
 /*

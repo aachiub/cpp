@@ -6,12 +6,12 @@
 /*   By: aachir <aachir@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/11 08:25:27 by aachir            #+#    #+#             */
-/*   Updated: 2019/03/28 15:42:55 by aachir           ###   ########.fr       */
+/*   Updated: 2019/03/28 16:15:09 by aachir           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FRAGTRAP_HPP
-# define FRAGTRAP_HPP
+# define FRAGTRAP_HPP 
 
 #include <iostream>
 

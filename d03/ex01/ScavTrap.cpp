@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   FragTrap.cpp                                       :+:      :+:    :+:   */
+/*   ScavTrap.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aachir <aachir@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/11 08:25:20 by aachir            #+#    #+#             */
-/*   Updated: 2019/03/28 16:10:42 by aachir           ###   ########.fr       */
+/*   Updated: 2019/03/28 16:15:03 by aachir           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iostream>
-#include "FragTrap.hpp"
+#include "ScavTrap.hpp"
 
 FragTrap::FragTrap ( std::string const & name ) : _name(name) {
 
