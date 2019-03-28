@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: aachir <aachir@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/01/07 11:10:45 by aachir            #+#    #+#             */
-/*   Updated: 2019/01/08 09:19:10 by aachir           ###   ########.fr       */
+/*   Created: 2019/03/25 16:16:11 by aachir            #+#    #+#             */
+/*   Updated: 2019/03/25 18:12:09 by aachir           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@ int Phonebook::getphonebookcontactnb(void) const
 int Phonebook::addphonebookcontact(t_contact *pcontact)
 {
 	int nb;
-	Contact *c;
 
 	if ((nb = this->getphonebookcontactnb()) == MAXCONTACTS)
 		return (0);

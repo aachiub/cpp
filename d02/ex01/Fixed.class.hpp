@@ -5,15 +5,15 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: aachir <aachir@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/01/09 06:17:08 by aachir            #+#    #+#             */
-/*   Updated: 2019/01/10 14:42:39 by aachir           ###   ########.fr       */
+/*   Created: 2019/03/27 16:11:19 by aachir            #+#    #+#             */
+/*   Updated: 2019/03/28 08:41:02 by aachir           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FIXED_HPP
 # define FIXED_HPP
 
-#include <iostream>
+#include <iostream> 
 
 class Fixed {
 

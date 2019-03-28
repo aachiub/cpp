@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: aachir <aachir@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/01/08 10:50:12 by aachir            #+#    #+#             */
-/*   Updated: 2019/03/24 14:04:36 by aachir           ###   ########.fr       */
+/*   Created: 2019/03/25 18:06:03 by aachir            #+#    #+#             */
+/*   Updated: 2019/03/25 18:12:30 by aachir           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ Account::Account( int initial_deposit )
 	++Account::_nbAccounts;
 
 	Account::_displayTimestamp();
-	std::cout << "index:" << this->_accountIndex << "amount:" << this->_amount \
+	std::cout << "index:" << this->_accountIndex << ";amount:" << this->_amount \
 				 << ";created" << std::endl;
 }
 
@@ -137,7 +137,7 @@ bool	Account::makeWithdrawal( int withdrawal )
 
 int		Account::checkAmount( void ) const
 {
-	++const_cast<Account *>(this)->_nbCheckAmount;
+	++const_cast< Account * >(this)->_nbCheckAmount;
 	return this->_amount;
 }
 
@@ -149,5 +149,4 @@ void	Account::displayStatus( void ) const
 			<< ";deposits:" << this->_nbDeposits \
 			<< ";withdrawals:" << this->_nbWithdrawals \
 			<< std::endl;
-
 }

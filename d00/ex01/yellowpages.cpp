@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: aachir <aachir@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/01/07 10:38:31 by aachir            #+#    #+#             */
-/*   Updated: 2019/03/24 14:01:41 by aachir           ###   ########.fr       */
+/*   Created: 2019/03/25 16:15:51 by aachir            #+#    #+#             */
+/*   Updated: 2019/03/25 18:12:19 by aachir           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ bool isnumber(const std::string &s) {
 }
 
 bool isprintable(const std::string &s) {
-  	for (int i = 0; i < s.size(); i++)
+  	for (size_t i = 0; i < s.size(); i++)
 		if( s[i] < 32 || s[i] > 127 )
 			return ( false );
 	return ( true );

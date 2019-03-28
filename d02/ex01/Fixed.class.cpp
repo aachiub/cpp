@@ -5,13 +5,13 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: aachir <aachir@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/01/09 06:17:02 by aachir            #+#    #+#             */
-/*   Updated: 2019/01/10 14:42:40 by aachir           ###   ########.fr       */
+/*   Created: 2019/03/27 16:11:09 by aachir            #+#    #+#             */
+/*   Updated: 2019/03/28 08:40:58 by aachir           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iostream>
-#include <cmath>
+#include <cmath> 
 #include "Fixed.class.hpp"
 
 Fixed::Fixed( const Fixed &f ) {
