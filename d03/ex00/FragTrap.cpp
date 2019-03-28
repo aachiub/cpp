@@ -19,8 +19,8 @@ FragTrap::FragTrap ( std::string const & name ) : _name(name) {
 	std::cout << " Constructor called for " << name << std::endl;
 
 	this->_level = 1;
-	this->_hitPoints = 0;
-	this->_energyPoints = _maxEnergyPoints;
+	this->_hitPoints = this->_maxHitPoints;
+	this->_energyPoints = this->_maxEnergyPoints;
 	
 	return ;	
 }
@@ -30,8 +30,8 @@ FragTrap::FragTrap ( void ) {
 	std::cout << "Default Constructor called" << std::endl;
 	
 	this->_level = 1;
-	this->_hitPoints = 0;
-	this->_energyPoints = _maxEnergyPoints;
+	this->_hitPoints = this->_maxHitPoints;
+	this->_energyPoints =  this->_maxEnergyPoints;
 	
 	return ;	
 }
@@ -147,8 +147,7 @@ void FragTrap::internetAttack(std::string const & target) {
 void FragTrap::victoryAttack(std::string const & target) {
 
 	std::cout << BLUE << FRAG4TP << "[" << this->getName() << "]";
-	std::cout << " victory attacks, " << RED << target << NORMAL << " causing " << RED <<  this->_victoryAttackDamage << NORMAL \
-				 												<<" points of damage !" << NORMAL << std::endl;
+	std::cout << " victory attacks, " << target << " causing " <<  this->_victoryAttackDamage <<" points of damage !" << NORMAL << std::endl;
 
 	if ((this->_hitPoints += 10 + rand() % 10) > _maxHitPoints)
 		this->_hitPoints =_maxHitPoints ;
@@ -156,13 +155,31 @@ void FragTrap::victoryAttack(std::string const & target) {
 	return ;	
 }
 
+bool FragTrap::takePenalty( unsigned int amount ){
+	if( !this->getEnergyPoints() )
+		return( false );
+	
+	this->_energyPoints -= amount;
+	if ( this->_energyPoints <= 0 ) {
+		this->_energyPoints = 0;
+		std::cout << BLUE << FRAG4TP << NORMAL << "[" << this->getName() << "]" << RED << MSG_OUTOFENERGY << NORMAL << std::endl;
+		return( false );
+	}
+	return( true );
+}
+
 void FragTrap::beRepaired(unsigned int amount) {
+
+	int hp = this->_hitPoints + amount;
+	if ( hp > this->_maxHitPoints )
+		amount -= hp - this->_maxHitPoints;
+
+	this->_hitPoints += amount;
+
 	std::cout << BLUE << FRAG4TP << NORMAL << "[" << this->getName() << "]";
-	std::cout << " needs repairs costing " << RED <<  amount << NORMAL << " points !" << NORMAL << std::endl;
-
-	this->applyPenalty( amount );
-
-	return ;	
+	std::cout << " is being repared, costing " << RED <<  amount << NORMAL << " points !" << std::endl;
+	
+	this->takePenalty( amount - this->_armorDamageReduction );
 }
 
 void FragTrap::takeDamage(unsigned int amount) {
@@ -170,20 +187,11 @@ void FragTrap::takeDamage(unsigned int amount) {
 	std::cout << BLUE << FRAG4TP << NORMAL << "[" << this->getName() << "]";
 	std::cout << " take damage costing " << RED <<  amount << NORMAL << " points !" << std::endl;
 
-	if ( this->applyPenalty( amount ) )
-		this->beRepaired( this->_armorDamageReduction );
+	this->_hitPoints -= amount;
+	if ( this->_hitPoints <= 0 )
+		this->_hitPoints = 0;
 
-	return ;
-}
-
-bool FragTrap::applyPenalty(unsigned int amount) {
-	this->_energyPoints -= amount;
-	if ( this->_energyPoints <= 0 ) {
-		this->_energyPoints = 0;
-		std::cout << BLUE << FRAG4TP << NORMAL << "[" << this->getName() << "]" << RED << MSG_OUTOFENERGY << NORMAL << std::endl;
-		return false;
-	}
-	return true;
+	this->takePenalty( amount );
 }
 
 void FragTrap::vaulthunter_dot_exe(std::string const & target) {
@@ -192,7 +200,8 @@ void FragTrap::vaulthunter_dot_exe(std::string const & target) {
 														&FragTrap::dawnAttack, &FragTrap::victoryAttack };
 	int nattackPtr = sizeof(attackPtr) / sizeof(attackPtr[0]);
 	
-	int			damage[] = { MELEEDAMAGE, RANGEDAMAGE, INTERNETDAMAGE, DAWNDAMAGE, VICTORYDAMAGE };
+	int	damage[] = { this->_meleeAttackDamage, this->_rangedAttackDamage, \
+				this->_internetAttackDamage, this->_dawnAttackDamage, this->_victoryAttackDamage };
 	
 	std::string		Names[] = {"Solo", "Lobster", "Valiant", "Warrior", "Brave"};
 
@@ -215,17 +224,26 @@ void FragTrap::vaulthunter_dot_exe(std::string const & target) {
 	ft[ curTarget ].displayStatus();
 	std::cout << "----------------------------------------------------------------------" << std::endl;
 
-	if ( !this->applyPenalty( VAULTPENALTY ) )
+	if ( !this->takePenalty( VAULTPENALTY ))
 		return ;
 
 	nAttacks = MAXATTACKS + rand() % MAXATTACKS;
+	int nheal = rand() % 3;
 	while ( nAttacks-- )
 	{	
+		if ( !this->takePenalty( 5 + ( rand() % 5 )))
+			break;
+		
 		std::cout << std::endl;
 		curAttack = rand() % nattackPtr;
 		(this->*attackPtr[curAttack]) ( target );
-
+ 
 		ft[ curTarget ].takeDamage( damage[ curAttack ] );
+ 
+		if( !--nheal && curAttack % 2 ) {
+			ft[ curTarget ].beRepaired( rand() % 50 );
+		}
+
 		if( !ft[ curTarget ].getEnergyPoints() )
 			break;
 	}

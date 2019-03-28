@@ -13,33 +13,31 @@
 #include <iostream>
 #include "FragTrap.hpp"
 
-void launchAttack( FragTrap & ft,  std::string & target) {
+void attack( FragTrap & ft, std::string & target )
+{
 
-		std::cout << std::endl;	
-		ft.rangedAttack( target );
-		ft.takeDamage(20);
-		std::cout << std::endl;	
+	std::cout << std::endl;	
+	ft.rangedAttack( target );
+	ft.takeDamage(20);
+	std::cout << std::endl;	
+	ft.displayStatus();
 
-		ft.meleeAttack( target );
-		ft.takeDamage(30);
-		ft.displayStatus();
-		ft.displayStatus();
-		std::cout << std::endl;	
+	std::cout << std::endl;	
+	ft.meleeAttack( target );
+	ft.takeDamage(30);
+	ft.displayStatus();
+	std::cout << std::endl;	
 }
+
 
 int main( void ) {
 
 	FragTrap		ft( "Rebel" );
 	std::string target = "Solo";
-//	launchAttack( ft, target );
 
-	ft.vaulthunter_dot_exe( target );
+//	attack( ft, target );
+	
+	ft.vaulthunter_dot_exe( "LEROCK" );
 
-/*
-	FragTrap		ft1( "Warrior" );
-	target = "Valiant";
-//	launchAttack( ft, target );
-	ft.vaulthunter_dot_exe( target );
-*/
 	return (0);
 }
