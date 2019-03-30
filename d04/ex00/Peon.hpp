@@ -4,7 +4,7 @@
 #include <iostream>
 #include "Victim.hpp"
 
-class Peon: public Victim {
+class Peon:   public Victim {
 
 public:
     Peon( std::string const & name );

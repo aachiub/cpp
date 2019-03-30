@@ -13,7 +13,7 @@ public:
 
     Victim & operator = ( Victim const & rhs );
 
-    void getPolymorphed( void ) const;
+    virtual void getPolymorphed( void ) const;
 
     std::string & getName( void );
     void setName( std::string const & name );

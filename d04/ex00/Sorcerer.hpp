@@ -14,8 +14,6 @@ public:
 
     Sorcerer & operator = ( Sorcerer const & rhs );
 
-    std::ostream & operator << ( std::ostream & os );
-
     void polymorph(Victim const & victim) const;
 
     std::string & getName( void );
